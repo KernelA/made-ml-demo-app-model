@@ -1,0 +1,6 @@
+batch_size: 32
+epochs: 2
+data_root_dir: ./data/modelnet10/train
+exp_dir: ./exp/class
+num_points: 4096
+num_workers: 4
