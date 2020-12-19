@@ -19,11 +19,14 @@ dependencies:
   - trimesh
   - pyglet
   - pip:
+      - torch-geometric
+      - gdown
+      - ipykernel
+  - pip:
       - --find-links https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
       - torch-cluster
       - torch-spline-conv
       - torch-cluster
       - torch-scatter
       - torch-sparse
-  - pip:
-      - torch-geometric
+
