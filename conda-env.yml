@@ -1,5 +1,6 @@
 channels:
   - defaults
+  - pytorch
   - conda-forge
 dependencies:
   - autopep8
@@ -18,8 +19,9 @@ dependencies:
   - trimesh
   - pyglet
   - pip:
-      - torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-      - torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-      - torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-      - torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
-      - torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+      - --find-links https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+      - torch-cluster
+      - torch-spline-conv
+      - torch-cluster
+      - torch-scatter
+      - torch-sparse

@@ -139,4 +139,5 @@ cython_debug/
 
 .vscode/
 data/
+data2/
 exp/
