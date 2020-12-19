@@ -1,24 +1,25 @@
 channels:
   - defaults
-  - pytorch
   - conda-forge
 dependencies:
-  - pip
-  - python=3.7
-  - pytorch=1.7
-  - cudatoolkit=10.2
   - autopep8
-  - pylint
+  - python=3.7
   - tensorboard
   - configargparse
-  - dvc=1.11
+  - pylint
+  - cudatoolkit=10.2
+  - pytorch=1.7
   - tqdm
+  - dvc=1.11
+  - pip
+  - ipython
+  - scikit-learn
+  - networkx
+  - trimesh
+  - pyglet
   - pip:
-      - --find-links https://pytorch-geometric.com/whl/torch-1.7.0.html
-      - torch-cluster==latest+cu102
-      - torch-spline-conv==latest+cu102
-      - torch-cluster==latest+cu102
-      - torch-scatter==latest+cu102
-      - torch-sparse==latest+cu102
-  - pip:
-      - torch-geometric
+      - torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+      - torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+      - torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+      - torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
+      - torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html

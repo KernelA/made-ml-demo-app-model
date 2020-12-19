@@ -172,7 +172,7 @@ def train(args):
         for epoch in tqdm.trange(args.epochs):
             losses, accuracy = train_one_epoch(device, train_loader, model, adamw)
             total_loss = sum(losses) / len(losses)
-            log_writer.add_scalar("Loss/cross entropy", total_loss, global_step=epoch)
+            log_writer.add_scalar("Train/loss cross entropy", total_loss, global_step=epoch)
             log_writer.add_scalar("Train/overall accuracy", accuracy, global_step=epoch)
 
             if epoch % args.save_every == 0:
