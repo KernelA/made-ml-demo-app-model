@@ -6,18 +6,20 @@ from typing import List, Optional
 
 import torch
 import tqdm
+import numpy as np
 from torch import optim, nn
 from torch.utils.tensorboard.writer import SummaryWriter
 from torch_geometric import data as gdata
-from torch_geometric import datasets as gdatasets
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
-from point_cloud_cls import SimpleClsLDGCN, BaseTransform, TrainTransform
+from point_cloud_cls import SimpleClsLDGCN, BaseTransform, TrainTransform, dataset
 
 
 LOGGER = logging.getLogger()
 
 LATEST_DIR_NAME = "latest"
+CUDA_DEVICE = "cuda"
+CPU_DEVICE = "cpu"
 
 
 def init():
@@ -31,6 +33,9 @@ def loss_function(predicted: torch.Tensor, true: torch.Tensor):
 def train_one_epoch(device, data_loader: gdata.DataLoader, model: SimpleClsLDGCN, optimizer) -> List[float]:
     model.train()
     losses = []
+
+    true = []
+    pred = []
     i = 0
     for point_cloud_batch in tqdm.tqdm(data_loader):
         optimizer.zero_grad()
@@ -40,29 +45,32 @@ def train_one_epoch(device, data_loader: gdata.DataLoader, model: SimpleClsLDGCN
         loss.backward()
         optimizer.step()
         losses.append(loss.item())
+        true.extend(point_cloud_batch.y.tolist())
+        pred.extend(prediction.argmax(dim=1).cpu().tolist())
         i += 1
-        if i > 10:
+        if i > 5:
             break
 
     optimizer.zero_grad()
 
-    return losses
+    return losses, accuracy_score(true, pred)
 
 
-def save_state(epoch, model, optimizer, checkpoint_dir: pathlib.Path):
+def save_training_state(epoch, model, optimizer, checkpoint_dir: pathlib.Path):
     LOGGER.info("Save state %s to %s", epoch, checkpoint_dir)
     latest_dir = checkpoint_dir / LATEST_DIR_NAME
     latest_dir.mkdir(exist_ok=True)
-
-    for file in latest_dir.iterdir():
-        if file.is_file() and file.name.endswith(".pth"):
-            file.rename(latest_dir.parents[1] / file.name)
 
     torch.save({
         'epoch': epoch,
         'model_state_dict': model.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
-    }, str(latest_dir / f"training_state_{epoch}.pth"))
+    }, str(latest_dir / f"training_state_latest.pth"))
+
+
+def save_model_state(epoch, model, checkpoint_dir: pathlib.Path):
+    LOGGER.info("Save state %s to %s", epoch, checkpoint_dir)
+    torch.save(model.state_dict(),  str(checkpoint_dir / f"model_state_{epoch}.pth"))
 
 
 def load_state(checkpoint_dir: pathlib.Path) -> Optional[dict]:
@@ -75,7 +83,6 @@ def load_state(checkpoint_dir: pathlib.Path) -> Optional[dict]:
     return None
 
 
-@ torch.no_grad()
 def test_model(device, model, test_loader):
     LOGGER.info("Test model")
     model.eval()
@@ -84,22 +91,28 @@ def test_model(device, model, test_loader):
     pred = []
 
     i = 0
-    for test_point_cloud in test_loader:
-        output = model(test_point_cloud.to(device)).argmax(dim=1)
-        true.extend(test_point_cloud.y.tolist())
-        pred.extend(output.tolist())
-        i += 1
-        if i > 10:
-            break
+    with torch.no_grad():
+        for test_point_cloud in test_loader:
+            output = model(test_point_cloud.to(device)).argmax(dim=1)
+            true.extend(test_point_cloud.y.tolist())
+            pred.extend(output.tolist())
+            i += 1
+            if i > 5:
+                pass
 
-    return classification_report(true, pred, target_names=test_loader.dataset.raw_file_names,
-                                 output_dict=True, labels=tuple(range(len(test_loader.dataset.raw_file_names))))
+    return classification_report(true, pred, target_names=test_loader.dataset.label_encoder.classes_,
+                                 output_dict=True, zero_division=0), confusion_matrix(true, pred)
 
 
 def save_report(epoch: int, report_dir: pathlib.Path, report: dict):
     LOGGER.info("Save report of %s to %s", epoch, report_dir)
     with open(report_dir / f"test_report_{epoch}.json", "w", encoding="utf-8") as report_file:
         json.dump(report, report_file)
+
+
+def save_conf_matrix(epoch: int, report_dir: pathlib.Path, conf_matrix: np.ndarray):
+    LOGGER.info("Save confusion matrix of %s to %s", epoch, report_dir)
+    np.savetxt(str(report_dir / f"conf_matrix_{epoch}.csv"), conf_matrix, fmt="%d", delimiter=",", encoding="utf-8")
 
 
 def train(args):
@@ -115,21 +128,25 @@ def train(args):
     rep_dir = exp_dir / "test_reports"
     rep_dir.mkdir(exist_ok=True)
 
-    device_name = "cuda" if torch.cuda.is_available() else "cpu"
+    device_name = CUDA_DEVICE if torch.cuda.is_available() else CPU_DEVICE
+
+    if device_name != CUDA_DEVICE:
+        LOGGER.warning("CUDA is not available.")
+
     device = torch.device(device_name)
     LOGGER.info("Select device: %s", device)
 
     base_transform = BaseTransform(args.num_points)
-    train_transform = TrainTransform(args.num_points, 15, 2, 0.02)
+    train_transform = TrainTransform(args.num_points, angle_degree=15, axis=2, rnd_shift=0.02)
 
-    train_dataset = gdatasets.ModelNet(args.data_root_dir, transform=train_transform, train=True)
+    train_dataset = dataset.SubsampleModelNet40(args.data_root_dir, transform=train_transform, train=True)
 
     LOGGER.info("Train model on %s features to classify %s classes", args.num_features, train_dataset.num_classes)
 
     model = SimpleClsLDGCN(args.num_features, train_dataset.num_classes).to(device)
     LOGGER.info("Transfer model to %s", device)
 
-    test_dataset = gdatasets.ModelNet(args.data_root_dir, transform=base_transform, train=False)
+    test_dataset = dataset.SubsampleModelNet40(args.data_root_dir, transform=base_transform, train=False)
 
     train_loader = gdata.DataLoader(train_dataset, batch_size=args.batch_size,
                                     pin_memory=True, num_workers=args.num_workers, shuffle=True)
@@ -153,21 +170,31 @@ def train(args):
         LOGGER.info("Begin training")
 
         for epoch in tqdm.trange(args.epochs):
-            losses = train_one_epoch(device, train_loader, model, adamw)
+            losses, accuracy = train_one_epoch(device, train_loader, model, adamw)
             total_loss = sum(losses) / len(losses)
-            log_writer.add_scalar("Cross entropy", total_loss, global_step=epoch)
+            log_writer.add_scalar("Loss/cross entropy", total_loss, global_step=epoch)
+            log_writer.add_scalar("Train/overall accuracy", accuracy, global_step=epoch)
 
             if epoch % args.save_every == 0:
-                save_state(epoch, model, adamw, check_dir)
+                save_training_state(epoch, model, adamw, check_dir)
+                save_model_state(epoch, model, check_dir)
 
             if epoch % args.test_every == 0:
-                cls_report = test_model(device, model, test_loader)
+                cls_report, conf_matrix = test_model(device, model, test_loader)
+                total = conf_matrix.sum()
+                accuracy = np.trace(conf_matrix) / total
+                log_writer.add_scalar("Test/overall accuracy", accuracy, global_step=epoch)
+                acc_per_class = {label: conf_matrix[index][index] / total
+                                 for index, label in enumerate(test_loader.dataset.label_encoder.classes_)}
+                log_writer.add_scalars("Test/accuracy per class", acc_per_class, global_step=epoch)
                 save_report(epoch, rep_dir, cls_report)
+                save_conf_matrix(epoch, rep_dir, conf_matrix)
 
         LOGGER.info("End training")
 
 
 def main(args):
+    init()
     train(args)
 
 

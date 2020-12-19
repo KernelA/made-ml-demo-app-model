@@ -16,16 +16,18 @@ class SubsampleModelNet40(data.InMemoryDataset):
         self.logger = logging.getLogger()
         self.train = train
         self.data_index = int(train)
+        self._label_encoder = LabelEncoder()
+        self._label_encoder.fit(self.raw_file_names)
         super().__init__(root, transform, pre_transform)
-        self.label_encoder = None
         self.data, self.slices = torch.load(self.processed_paths[self.data_index])
 
     @ property
     def raw_file_names(self):
         return ["bed", "chair", "desk", "door", "sofa", "stool", "table"]
 
+    @property
     def label_encoder(self):
-        return self.label_encoder
+        return self._label_encoder
 
     @ property
     def processed_file_names(self):
@@ -55,9 +57,6 @@ class SubsampleModelNet40(data.InMemoryDataset):
         shutil.rmtree(data_dir)
 
     def process(self):
-        self.label_encoder = LabelEncoder()
-        self.label_encoder.fit(self.raw_file_names)
-
         for prefix, processed_path in zip(("test", "train"), self.processed_file_names):
             data_list = []
             with os.scandir(self.raw_dir) as entry_it:
@@ -67,7 +66,7 @@ class SubsampleModelNet40(data.InMemoryDataset):
                         for off_file in os.listdir(off_dir):
                             if os.path.splitext(off_file)[1] == ".off":
                                 mesh = io.read_off(os.path.join(off_dir, off_file))
-                                mesh.y = self.label_encoder.transform([entry.name])
+                                mesh.y = torch.from_numpy(self._label_encoder.transform([entry.name]))
                                 data_list.append(mesh)
 
             if self.pre_filter is not None:
