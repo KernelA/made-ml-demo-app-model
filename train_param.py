@@ -14,11 +14,11 @@ class OptimizerParams:
 class ModelParams:
     def __init__(self):
         self.in_chan = 3
-        self.num_neighborhoods = 16
+        self.num_neighborhoods = 64
 
 
 class DataParams:
     def __init__(self):
         self.num_points = 4096
-        self.batch_size = 512
+        self.batch_size = 128
         self.epochs = 100

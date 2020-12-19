@@ -23,7 +23,7 @@ class SubsampleModelNet40(data.InMemoryDataset):
 
     @ property
     def raw_file_names(self):
-        return ["bed", "chair", "desk", "door", "sofa", "stool", "table"]
+        return ["bed", "chair", "desk", "door"]
 
     @property
     def label_encoder(self):
