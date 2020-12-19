@@ -2,10 +2,7 @@
 
 """
 
-import logging.config
-
-
-_BASE_FORMAT = '%(asctime)-15s %(threadName)s %(levelname)-5s %(message)s'
+_BASE_FORMAT = '%(asctime)-s %(levelname)-s %(message)s'
 
 
 LOGGER_CONFIG = {
