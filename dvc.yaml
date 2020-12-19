@@ -6,7 +6,7 @@ stages:
     - ./configs/prepare_data.yml
     - ./point_cloud_cls
     - ./train.py
-    - ./data/sample-modelnet40
+    - ./data/simple-shapes
     params:
     - train_param.py:
       - DataParams.batch_size
@@ -30,4 +30,4 @@ stages:
     - ./configs/prepare_data.yml
     - ./prepare_data.py
     outs:
-    - ./data/sample-modelnet40
+    - ./data/simple-shapes

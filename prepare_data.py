@@ -12,4 +12,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Download only and save to torch format
-    _ = dataset.SubsampleModelNet40(args.data_root_dir, args.classes)
+    _ = dataset.SimpleShapes(args.data_root_dir, args.classes)

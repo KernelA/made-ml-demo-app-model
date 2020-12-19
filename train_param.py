@@ -4,7 +4,7 @@ SEED = 100
 
 class OptimizerParams:
     def __init__(self):
-        self.lr = 1e-3
+        self.lr = 1e-1
         self.betas = (0.9, 0.999)
         self.eps = 1e-8
         self.weight_decay = 1e-2
@@ -19,7 +19,7 @@ class ModelParams:
 
 class DataParams:
     def __init__(self):
-        self.num_points = 2048
+        self.num_points = 512
         self.batch_size = 32
         self.epochs = 50
 

@@ -28,7 +28,7 @@ CPU_DEVICE = "cpu"
 
 def init(seed: int):
     torch.backends.cudnn.benchmark = False
-    torch.seed()
+    torch.random.manual_seed(seed)
     np.random.seed(seed)
     random.seed(seed)
 
@@ -175,9 +175,12 @@ def train(args):
     base_transform = BaseTransform(num_points)
     train_transform = TrainTransform(num_points, angle_degree=15, axis=2, rnd_shift=0.02)
 
-    classes = load_yaml(args.data_config)["classes"]
+    data_config = load_yaml(args.data_config)
+    data_root = data_config["data_root_dir"]
+    classes = data_config["classes"]
+    del data_config
 
-    train_dataset = dataset.SubsampleModelNet40(args.data_root_dir, classes, transform=train_transform, train=True)
+    train_dataset = dataset.SimpleShapes(data_root, classes, transform=train_transform, train=True)
 
     LOGGER.info("Train model on %s features to classify %s classes", num_features, train_dataset.num_classes)
 
@@ -188,7 +191,7 @@ def train(args):
 
     LOGGER.info("Transfer model to %s", device)
 
-    test_dataset = dataset.SubsampleModelNet40(args.data_root_dir, classes, transform=base_transform, train=False)
+    test_dataset = dataset.SimpleShapes(data_root, classes, transform=base_transform, train=False)
 
     train_loader = gdata.DataLoader(train_dataset, batch_size=data_params.batch_size,
                                     pin_memory=True, num_workers=args.num_workers, shuffle=True)
@@ -254,7 +257,6 @@ def main(args):
 if __name__ == "__main__":
     parser = configargparse.ArgumentParser()
     parser.add_argument("--config", is_config_file=True, required=True, help="Train config")
-    parser.add_argument("--data_root_dir", type=str, required=True, help="A path to data dir")
     parser.add_argument("--exp_dir", required=True, type=str, help="A path to directory with checkpoints and logs")
     parser.add_argument("--num_workers", default=2, type=int, help="A number of workers to load data")
     parser.add_argument("--checkpoint_every_epoch", dest="save_every", type=int,
