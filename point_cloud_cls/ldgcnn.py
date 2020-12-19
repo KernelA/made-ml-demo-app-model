@@ -17,8 +17,8 @@ class SimpleClsLDGCN(nn.Module):
         super().__init__()
         out_conv1_chan = 32
         self.conv1 = gnn.DynamicEdgeConv(MLP((2 * in_chan, 32, 64, out_conv1_chan)), k=num_neighborhoods)
-        out_conv2_chan = 64
-        self.conv2 = gnn.DynamicEdgeConv(MLP((2 * out_conv1_chan, 128, out_conv2_chan)), k=num_neighborhoods // 2)
+        out_conv2_chan = 128
+        self.conv2 = gnn.DynamicEdgeConv(MLP((2 * out_conv1_chan, 64, out_conv2_chan)), k=num_neighborhoods // 2)
         out_mlp_chan = 256
         self.mlp = MLP([out_conv2_chan, out_conv2_chan, out_mlp_chan])
         self.cls_layer = nn.Linear(out_mlp_chan, out_chan)
