@@ -16,7 +16,7 @@ class SimpleClsLDGCN(nn.Module):
         assert num_neighborhoods // 2 > 1
         super().__init__()
         out_conv1_chan = 32
-        self.conv1 = gnn.DynamicEdgeConv(MLP((2 * in_chan, 32, 64, out_conv1_chan)), k=num_neighborhoods)
+        self.conv1 = gnn.DynamicEdgeConv(MLP((2 * in_chan, 16, 32, out_conv1_chan)), k=num_neighborhoods)
         out_conv2_chan = 128
         self.conv2 = gnn.DynamicEdgeConv(MLP((2 * out_conv1_chan, 64, out_conv2_chan)), k=num_neighborhoods // 2)
         out_mlp_chan = 256
@@ -28,4 +28,4 @@ class SimpleClsLDGCN(nn.Module):
         x = self.conv1(pos, batch)
         x = self.conv2(x, batch)
         global_features = gnn.global_max_pool(self.mlp(x), batch=batch)
-        return functional.log_softmax(functional.relu_(self.cls_layer(global_features)), dim=1)
+        return functional.log_softmax(self.cls_layer(global_features), dim=1)
