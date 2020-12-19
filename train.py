@@ -47,6 +47,7 @@ def train_one_epoch(epoch: int, device, data_loader: gdata.DataLoader,
 
     colors = None
 
+    batch_num = 0
     for point_cloud_batch in tqdm.tqdm(data_loader):
         optimizer.zero_grad()
         gpu_point_cloud = point_cloud_batch.to(device)
@@ -69,10 +70,10 @@ def train_one_epoch(epoch: int, device, data_loader: gdata.DataLoader,
 
             true_label = data_loader.dataset.label_encoder.inverse_transform(true_in_batch[None, incorrect_index].cpu())
             pred_label = data_loader.dataset.label_encoder.inverse_transform(pred_in_batch[None, incorrect_index].cpu())
-            writer.add_mesh(f"Train/incorrect_classify_expected_{true_label}_predicted_{pred_label}",
+            writer.add_mesh(f"Train/incorrect_classify_expected_{true_label}_predicted_{pred_label}_{batch_num}",
                             vertices=vertices, colors=colors,
                             global_step=epoch)
-
+        batch_num += 1
         true.extend(true_in_batch.tolist())
         pred.extend(pred_in_batch.tolist())
 
