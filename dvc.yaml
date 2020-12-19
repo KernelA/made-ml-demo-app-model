@@ -1,0 +1,23 @@
+stages:
+  train_model:
+    cmd: python ./train.py --config ./configs/base_params.yml
+    deps:
+    - ./configs/base_params.yml
+    - ./data/sample-modelnet40
+    - ./point_cloud_cls
+    - ./train.py
+    params:
+    - train_param.py:
+      - DataParams.batch_size
+      - DataParams.epochs
+      - DataParams.num_points
+      - ModelParams.in_chan
+      - ModelParams.num_neighborhoods
+      - OptimizerParams.amsgrad
+      - OptimizerParams.betas
+      - OptimizerParams.eps
+      - OptimizerParams.lr
+      - OptimizerParams.weight_decay
+      - SEED
+    outs:
+    - ./exp
