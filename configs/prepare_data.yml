@@ -1,0 +1,2 @@
+classes: [bed, chair, desk, door]
+data_root_dir: ./data/sample-modelnet40

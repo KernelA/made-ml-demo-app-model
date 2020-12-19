@@ -1,6 +1,7 @@
 import os
 import shutil
 import logging
+from typing import List
 
 import torch
 import gdown
@@ -12,8 +13,56 @@ from sklearn.preprocessing import LabelEncoder
 class SubsampleModelNet40(data.InMemoryDataset):
     URL = "https://drive.google.com/uc?id=1fRcBvYY5oFYSd71-O9bUhvc8FSO74aJc"
 
-    def __init__(self, root, train: bool = True, transform=None, pre_transform=None):
+    CLASSES = frozenset((
+        "airplane",
+        "bathtub",
+        "bed",
+        "bench",
+        "bookshelf",
+        "bottle",
+        "bowl",
+        "car",
+        "chair",
+        "cone",
+        "cup",
+        "curtain",
+        "desk",
+        "door",
+        "dresser",
+        "flower_pot",
+        "glass_box",
+        "guitar",
+        "keyboard",
+        "lamp",
+        "laptop",
+        "mantel",
+        "monitor",
+        "night_stand",
+        "person",
+        "piano",
+        "plant",
+        "radio",
+        "range_hood",
+        "sink",
+        "sofa",
+        "stairs",
+        "stool",
+        "table",
+        "tent",
+        "toilet",
+        "tv_stand",
+        "vase",
+        "wardrobe",
+        "xbox")
+    )
+
+    def __init__(self, root, classes: List[str], train: bool = True, transform=None, pre_transform=None):
+        for class_name in classes:
+            if class_name not in self.CLASSES:
+                raise ValueError(f"Class '{class_name} not in ModelNet40")
+
         self.logger = logging.getLogger()
+        self.classes = classes
         self.train = train
         self.data_index = int(train)
         self._label_encoder = LabelEncoder()
@@ -25,7 +74,7 @@ class SubsampleModelNet40(data.InMemoryDataset):
     def raw_file_names(self):
         return ["bed", "chair", "desk", "door"]
 
-    @property
+    @ property
     def label_encoder(self):
         return self._label_encoder
 
