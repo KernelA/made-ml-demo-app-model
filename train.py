@@ -59,18 +59,19 @@ def train_one_epoch(epoch: int, device, data_loader: gdata.DataLoader,
         pred_in_batch = prediction.argmax(dim=1)
         incorrect = (true_in_batch != pred_in_batch).cpu()
 
-        incorrect_index = random.choice(torch.nonzero(incorrect).view(-1))
-        vertices = point_cloud_batch.pos[point_cloud_batch.batch == incorrect_index, :].unsqueeze(0)
+        if incorrect.any():
+            incorrect_index = random.choice(torch.nonzero(incorrect).view(-1))
+            vertices = point_cloud_batch.pos[point_cloud_batch.batch == incorrect_index, :].unsqueeze(0)
 
-        if colors is None:
-            colors = torch.zeros_like(vertices, dtype=torch.uint8)
-            colors[:, :, 0] = 255
+            if colors is None:
+                colors = torch.zeros_like(vertices, dtype=torch.uint8)
+                colors[:, :, 0] = 255
 
-        true_label = data_loader.dataset.label_encoder.inverse_transform(true_in_batch[None, incorrect_index].cpu())
-        pred_label = data_loader.dataset.label_encoder.inverse_transform(pred_in_batch[None, incorrect_index].cpu())
-        writer.add_mesh(f"Train/incorrect_classify_expected_{true_label}_predicted_{pred_label}",
-                        vertices=vertices, colors=colors,
-                        global_step=epoch)
+            true_label = data_loader.dataset.label_encoder.inverse_transform(true_in_batch[None, incorrect_index].cpu())
+            pred_label = data_loader.dataset.label_encoder.inverse_transform(pred_in_batch[None, incorrect_index].cpu())
+            writer.add_mesh(f"Train/incorrect_classify_expected_{true_label}_predicted_{pred_label}",
+                            vertices=vertices, colors=colors,
+                            global_step=epoch)
 
         true.extend(true_in_batch.tolist())
         pred.extend(pred_in_batch.tolist())
