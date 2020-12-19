@@ -1,11 +1,15 @@
+import argparse
 import configargparse
 import pathlib
 import logging
 import json
 from typing import List, Optional
+import random
 
 import torch
+from torch.nn import parameter
 import tqdm
+import yaml
 import numpy as np
 from torch import optim, nn
 from torch.utils.tensorboard.writer import SummaryWriter
@@ -13,6 +17,7 @@ from torch_geometric import data as gdata
 from sklearn.metrics import classification_report, accuracy_score, confusion_matrix
 
 from point_cloud_cls import SimpleClsLDGCN, BaseTransform, TrainTransform, dataset
+import train_param
 
 
 LOGGER = logging.getLogger()
@@ -22,8 +27,11 @@ CUDA_DEVICE = "cuda"
 CPU_DEVICE = "cpu"
 
 
-def init():
-    torch.backends.cudnn.benchmark = True
+def init(seed: int):
+    torch.backends.cudnn.benchmark = False
+    torch.seed()
+    np.random.seed(seed)
+    random.seed(seed)
 
 
 def loss_function(predicted: torch.Tensor, true: torch.Tensor):
@@ -136,24 +144,35 @@ def train(args):
     device = torch.device(device_name)
     LOGGER.info("Select device: %s", device)
 
-    base_transform = BaseTransform(args.num_points)
-    train_transform = TrainTransform(args.num_points, angle_degree=15, axis=2, rnd_shift=0.02)
+    data_params = train_param.DataParams()
+    model_params = train_param.ModelParams()
+    optim_params = train_param.OptimizerParams()
+
+    num_points = data_params.num_points
+    num_features = model_params.in_chan
+
+    base_transform = BaseTransform(num_points)
+    train_transform = TrainTransform(num_points, angle_degree=15, axis=2, rnd_shift=0.02)
 
     train_dataset = dataset.SubsampleModelNet40(args.data_root_dir, transform=train_transform, train=True)
 
-    LOGGER.info("Train model on %s features to classify %s classes", args.num_features, train_dataset.num_classes)
+    LOGGER.info("Train model on %s features to classify %s classes", num_features, train_dataset.num_classes)
 
-    model = SimpleClsLDGCN(args.num_features, train_dataset.num_classes).to(device)
+    model_params_dict = {"out_chan":  train_dataset.num_classes, **model_params.__dict__}
+    del model_params
+    model = SimpleClsLDGCN(**model_params_dict).to(device)
+    del model_params_dict
+
     LOGGER.info("Transfer model to %s", device)
 
     test_dataset = dataset.SubsampleModelNet40(args.data_root_dir, transform=base_transform, train=False)
 
-    train_loader = gdata.DataLoader(train_dataset, batch_size=args.batch_size,
+    train_loader = gdata.DataLoader(train_dataset, batch_size=data_params.batch_size,
                                     pin_memory=True, num_workers=args.num_workers, shuffle=True)
-    test_loader = gdata.DataLoader(test_dataset, batch_size=args.batch_size,
+    test_loader = gdata.DataLoader(test_dataset, batch_size=data_params.batch_size,
                                    pin_memory=True, num_workers=args.num_workers)
 
-    adamw = optim.AdamW(model.parameters(), lr=1e-2)
+    adamw = optim.AdamW(model.parameters(), **optim_params.__dict__)
 
     LOGGER.info("Try to load state from %s", check_dir)
     state = load_state(check_dir)
@@ -169,9 +188,10 @@ def train(args):
     with SummaryWriter(str(log_dir), comment="Train classification model", flush_secs=60) as log_writer:
         LOGGER.info("Begin training")
 
-        for epoch in tqdm.trange(args.epochs):
+        for epoch in tqdm.trange(data_params.epochs):
             losses, accuracy = train_one_epoch(device, train_loader, model, adamw)
             total_loss = sum(losses) / len(losses)
+            LOGGER.info("Epoch: %d Loss: %f.4  Train accuracy: %f.2", epoch, total_loss, accuracy)
             log_writer.add_scalar("Train/loss cross entropy", total_loss, global_step=epoch)
             log_writer.add_scalar("Train/overall accuracy", accuracy, global_step=epoch)
 
@@ -189,25 +209,22 @@ def train(args):
                 log_writer.add_scalars("Test/accuracy per class", acc_per_class, global_step=epoch)
                 save_report(epoch, rep_dir, cls_report)
                 save_conf_matrix(epoch, rep_dir, conf_matrix)
+                LOGGER.info("Epoch: %d Test accuracy: %f.2", epoch, total_loss, accuracy)
 
         LOGGER.info("End training")
 
 
 def main(args):
-    init()
+    init(train_param.SEED)
     train(args)
 
 
 if __name__ == "__main__":
     parser = configargparse.ArgumentParser()
     parser.add_argument("--config", is_config_file=True, required=True, help="Train config")
-    parser.add_argument("--batch_size", default=64, type=int, help="A batch size for training")
-    parser.add_argument("--epochs", type=int, default=10, help="A number of epochs")
     parser.add_argument("--data_root_dir", type=str, required=True, help="A path to data dir")
     parser.add_argument("--exp_dir", required=True, type=str, help="A path to directory with checkpoints and logs")
     parser.add_argument("--num_workers", default=2, type=int, help="A number of workers to load data")
-    parser.add_argument("--num_points", default=2048, type=int, help="A number of points to sample data")
-    parser.add_argument("--num_features", type=int, default=3, help="A number of features")
     parser.add_argument("--checkpoint_every_epoch", dest="save_every", type=int,
                         default=1, help="Save checkpoint after each epoch")
     parser.add_argument("--test_every", type=int,
