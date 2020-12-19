@@ -21,4 +21,10 @@ class DataParams:
     def __init__(self):
         self.num_points = 4096
         self.batch_size = 128
-        self.epochs = 100
+        self.epochs = 50
+
+
+class SchedulerParams:
+    def __init__(self):
+        self.eta_min = 1e-4
+        self.verbose = True

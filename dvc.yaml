@@ -3,6 +3,7 @@ stages:
     cmd: python ./train.py --config ./configs/base_params.yml
     deps:
     - ./configs/base_params.yml
+    - ./configs/prepare_data.yml
     - ./point_cloud_cls
     - ./train.py
     - ./data/sample-modelnet40
