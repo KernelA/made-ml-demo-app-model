@@ -20,5 +20,5 @@ class ModelParams:
 class DataParams:
     def __init__(self):
         self.num_points = 4096
-        self.batch_size = 32
+        self.batch_size = 512
         self.epochs = 100
