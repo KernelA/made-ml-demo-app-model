@@ -191,7 +191,7 @@ def train(args):
         for epoch in tqdm.trange(data_params.epochs):
             losses, accuracy = train_one_epoch(device, train_loader, model, adamw)
             total_loss = sum(losses) / len(losses)
-            LOGGER.info("Epoch: %d Loss: %f.4  Train accuracy: %f.2", epoch, total_loss, accuracy)
+            LOGGER.info("Epoch: %d Loss: %.4f  Train accuracy: %.2f", epoch, total_loss, accuracy)
             log_writer.add_scalar("Train/loss cross entropy", total_loss, global_step=epoch)
             log_writer.add_scalar("Train/overall accuracy", accuracy, global_step=epoch)
 
@@ -209,7 +209,7 @@ def train(args):
                 log_writer.add_scalars("Test/accuracy per class", acc_per_class, global_step=epoch)
                 save_report(epoch, rep_dir, cls_report)
                 save_conf_matrix(epoch, rep_dir, conf_matrix)
-                LOGGER.info("Epoch: %d Test accuracy: %f.2", epoch, total_loss, accuracy)
+                LOGGER.info("Epoch: %d Test accuracy: %.2f", epoch, accuracy)
 
         LOGGER.info("End training")
 
