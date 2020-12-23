@@ -31,3 +31,14 @@ stages:
     - ./prepare_data.py
     outs:
     - ./data/simple-shapes
+  export_model:
+    cmd: python ./export_model.py --config ./configs/export_model.yml
+    deps:
+    - ./configs/export_model.yml
+    - ./configs/prepare_data.yml
+    - ./exp/checkpoints/model_state_48.pth
+    - ./export_model.py
+    - ./point_cloud_cls
+    outs:
+    - ./inference-data:
+        cache: false

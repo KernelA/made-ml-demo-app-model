@@ -54,3 +54,27 @@ train_model:
     md5: 1f8ed5a2c94ccf01139a28f6e88e2253.dir
     size: 20341918
     nfiles: 67
+export_model:
+  cmd: python ./export_model.py --config ./configs/export_model.yml
+  deps:
+  - path: ./configs/export_model.yml
+    md5: 1ecce98bf73e08ba2d043e04a24ff900
+    size: 132
+  - path: ./configs/prepare_data.yml
+    md5: bca44fa9f227be197d1ea6eac98c2be9
+    size: 93
+  - path: ./exp/checkpoints/model_state_48.pth
+    md5: e1fef55e5e5b4de8cd0d0e9ee38ee30f
+    size: 289159
+  - path: ./export_model.py
+    md5: f0a571c7ccbe223549a147c905606b1a
+    size: 2935
+  - path: ./point_cloud_cls
+    md5: e4ccca7fe97eac60aec442936a2706ae.dir
+    size: 20641
+    nfiles: 10
+  outs:
+  - path: ./inference-data
+    md5: 4957489a6ab1e7b0d549c0b022964d02.dir
+    size: 289665
+    nfiles: 3
