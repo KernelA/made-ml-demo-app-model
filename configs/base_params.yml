@@ -1,5 +1,5 @@
-data_root_dir: ./data/sample-modelnet40
+data_config: ./configs/prepare_data.yml
 exp_dir: ./exp
-num_workers: 6
-checkpoint_every_epoch: 10
-test_every: 5
+num_workers: 4
+checkpoint_every_epoch: 2
+test_every: 3

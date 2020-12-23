@@ -1,0 +1,2 @@
+classes: [cone, cube, cylinder, plane, torus, uv_sphere]
+data_root_dir: ./data/simple-shapes

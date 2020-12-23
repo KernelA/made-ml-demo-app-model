@@ -4,7 +4,7 @@ SEED = 100
 
 class OptimizerParams:
     def __init__(self):
-        self.lr = 1e-3
+        self.lr = 1e-1
         self.betas = (0.9, 0.999)
         self.eps = 1e-8
         self.weight_decay = 1e-2
@@ -14,11 +14,17 @@ class OptimizerParams:
 class ModelParams:
     def __init__(self):
         self.in_chan = 3
-        self.num_neighborhoods = 16
+        self.num_neighborhoods = 32
 
 
 class DataParams:
     def __init__(self):
-        self.num_points = 4096
-        self.batch_size = 512
-        self.epochs = 100
+        self.num_points = 512
+        self.batch_size = 64
+        self.epochs = 50
+
+
+class SchedulerParams:
+    def __init__(self):
+        self.eta_min = 1e-4
+        self.verbose = True

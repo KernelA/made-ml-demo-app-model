@@ -3,9 +3,10 @@ stages:
     cmd: python ./train.py --config ./configs/base_params.yml
     deps:
     - ./configs/base_params.yml
-    - ./data/sample-modelnet40
+    - ./configs/prepare_data.yml
     - ./point_cloud_cls
     - ./train.py
+    - ./data/simple-shapes
     params:
     - train_param.py:
       - DataParams.batch_size
@@ -18,6 +19,15 @@ stages:
       - OptimizerParams.eps
       - OptimizerParams.lr
       - OptimizerParams.weight_decay
+      - SchedulerParams.eta_min
+      - SchedulerParams.verbose
       - SEED
     outs:
     - ./exp
+  prepare_data:
+    cmd: python ./prepare_data.py --config ./configs/prepare_data.yml
+    deps:
+    - ./configs/prepare_data.yml
+    - ./prepare_data.py
+    outs:
+    - ./data/simple-shapes
