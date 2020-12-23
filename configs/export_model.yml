@@ -1,0 +1,4 @@
+data_config: ./configs/prepare_data.yml
+checkpoint: ./exp/checkpoints/model_state_48.pth
+export_dir: ./inference-data
+device: cpu
