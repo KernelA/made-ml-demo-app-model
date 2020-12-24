@@ -9,12 +9,12 @@ dependencies:
   - configargparse
   - pylint
   - cudatoolkit=10.2
-  - pytorch=1.7
+  - pytorch=1.7.0
   - tqdm
   - dvc=1.11
   - pip
   - ipython
-  - scikit-learn
+  - scikit-learn=0.23.2
   - networkx
   - trimesh
   - pyglet
