@@ -24,8 +24,12 @@ class SimpleClsLDGCN(nn.Module):
         self.cls_layer = nn.Linear(out_mlp_chan, out_chan)
 
     def forward(self, data):
+        global_features = self.global_feature(data)
+        return functional.log_softmax(self.cls_layer(global_features), dim=1)
+
+    def global_feature(self, data):
         pos, batch = data.pos, data.batch
         x = self.conv1(pos, batch)
         x = self.conv2(x, batch)
         global_features = gnn.global_max_pool(self.mlp(x), batch=batch)
-        return functional.log_softmax(self.cls_layer(global_features), dim=1)
+        return global_features
