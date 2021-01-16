@@ -58,7 +58,7 @@ def main(args):
     classes = data_config["classes"]
 
     base_transform = BaseTransform(num_points)
-    test_dataset = dataset.SimpleShapes(data_root, classes, transform=base_transform, train=False)
+    test_dataset = dataset.SimpleShapes(data_root, classes, transform=base_transform, is_train=False)
 
     model_data_dir = export_dir / "model"
     model_data_dir.mkdir(exist_ok=True)

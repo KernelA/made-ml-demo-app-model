@@ -30,7 +30,7 @@ stages:
     - ./configs/prepare_data.yml
     - ./prepare_data.py
     outs:
-    - ./data/simple-shapes
+    - ./train_data/simple-shapes
   export_model:
     cmd: python ./export_model.py --config ./configs/export_model.yml
     deps:

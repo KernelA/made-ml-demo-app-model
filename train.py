@@ -180,7 +180,7 @@ def train(args):
     classes = data_config["classes"]
     del data_config
 
-    train_dataset = dataset.SimpleShapes(data_root, classes, transform=train_transform, train=True)
+    train_dataset = dataset.SimpleShapes(data_root, classes, transform=train_transform, is_train=True)
 
     LOGGER.info("Train model on %s features to classify %s classes", num_features, train_dataset.num_classes)
 
@@ -191,7 +191,7 @@ def train(args):
 
     LOGGER.info("Transfer model to %s", device)
 
-    test_dataset = dataset.SimpleShapes(data_root, classes, transform=base_transform, train=False)
+    test_dataset = dataset.SimpleShapes(data_root, classes, transform=base_transform, is_train=False)
 
     train_loader = gdata.DataLoader(train_dataset, batch_size=data_params.batch_size,
                                     pin_memory=True, num_workers=args.num_workers, shuffle=True)

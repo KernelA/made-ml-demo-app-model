@@ -2,16 +2,16 @@ prepare_data:
   cmd: python ./prepare_data.py --config ./configs/prepare_data.yml
   deps:
   - path: ./configs/prepare_data.yml
-    md5: bca44fa9f227be197d1ea6eac98c2be9
-    size: 93
+    md5: 35cf285709de03be99eb22fa88c0bed7
+    size: 134
   - path: ./prepare_data.py
-    md5: de88834a3cd9ee96fe697ef4bf0f5ffd
-    size: 573
+    md5: 41be5742cbc30c4888a5f7af95cf40bd
+    size: 678
   outs:
-  - path: ./data/simple-shapes
-    md5: 7eb4f06a1dd9031da3506ae150d330c0.dir
-    size: 52966401
-    nfiles: 2254
+  - path: ./train_data/simple-shapes
+    md5: 0d9e84920319f0460a5cf072a53d222e.dir
+    size: 25495352
+    nfiles: 5
 train_model:
   cmd: python ./train.py --config ./configs/base_params.yml
   deps:
