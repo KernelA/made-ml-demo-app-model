@@ -22,11 +22,11 @@ train_model:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./nn_model
-    md5: 15d70c1c0236a7ed73e0bd205b9ecb86.dir
+    md5: 0b2dcae180a24465fe116bbe0db86a40.dir
     size: 3424
     nfiles: 4
   - path: ./point_cloud_cls
-    md5: d1e8f5ac52ad2c899fc3043cb80de6ff.dir
+    md5: f8bb4718a49503b30ab8f69925a75bf1.dir
     size: 20635
     nfiles: 11
   - path: ./train.py
@@ -53,18 +53,18 @@ train_model:
         amsgrad: false
       SEED: 100
       SchedulerParams:
-        step_size: 15
+        step_size: 20
         verbose: true
       TrainParams:
         batch_size: 110
-        epochs: 50
+        epochs: 60
         valid_every: 5
         benchmark: true
         deterministic: true
   outs:
   - path: ./exp
-    md5: eea86fb2afebeb0ce4a3eb7767de73f5.dir
-    size: 2906752
+    md5: 04d2b011eb1ae65f51f958de70b5c78c.dir
+    size: 2968631
     nfiles: 11
 export_model:
   cmd: python ./export_model.py --config ./configs/export_model.yml
