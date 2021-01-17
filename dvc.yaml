@@ -5,22 +5,16 @@ stages:
     - ./configs/base_params.yml
     - ./configs/prepare_data.yml
     - ./point_cloud_cls
+    - ./nn_model
     - ./train.py
-    - ./data/simple-shapes
+    - ./train_data/simple-shapes
     params:
     - train_param.py:
-      - DataParams.batch_size
-      - DataParams.epochs
-      - DataParams.num_points
-      - ModelParams.in_chan
-      - ModelParams.num_neighborhoods
-      - OptimizerParams.amsgrad
-      - OptimizerParams.betas
-      - OptimizerParams.eps
-      - OptimizerParams.lr
-      - OptimizerParams.weight_decay
-      - SchedulerParams.eta_min
-      - SchedulerParams.verbose
+      - DataParams
+      - OptimizerParams
+      - ModelParams
+      - TrainParams
+      - SchedulerParams
       - SEED
     outs:
     - ./exp

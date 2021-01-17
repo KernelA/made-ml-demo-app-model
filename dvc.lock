@@ -16,44 +16,56 @@ train_model:
   cmd: python ./train.py --config ./configs/base_params.yml
   deps:
   - path: ./configs/base_params.yml
-    md5: 44227a4188a99e98a05de311bd1d0082
-    size: 113
+    md5: 14a4438a31729caa1a99572e5c6b0b3e
+    size: 71
   - path: ./configs/prepare_data.yml
-    md5: bca44fa9f227be197d1ea6eac98c2be9
-    size: 93
-  - path: ./data/simple-shapes
-    md5: 7eb4f06a1dd9031da3506ae150d330c0.dir
-    size: 52966401
-    nfiles: 2254
+    md5: 35cf285709de03be99eb22fa88c0bed7
+    size: 134
+  - path: ./nn_model
+    md5: 15d70c1c0236a7ed73e0bd205b9ecb86.dir
+    size: 3424
+    nfiles: 4
   - path: ./point_cloud_cls
-    md5: 9e08b5844494ace9d374a87a22381e38.dir
-    size: 20650
-    nfiles: 10
+    md5: d1e8f5ac52ad2c899fc3043cb80de6ff.dir
+    size: 20635
+    nfiles: 11
   - path: ./train.py
-    md5: c1b4b17573e277ae68fff043c5589a56
-    size: 10731
+    md5: 79b02d7df379e7523cdc90fc66bfa927
+    size: 5061
+  - path: ./train_data/simple-shapes
+    md5: 0d9e84920319f0460a5cf072a53d222e.dir
+    size: 25495352
+    nfiles: 5
   params:
     train_param.py:
-      DataParams.batch_size: 64
-      DataParams.epochs: 50
-      DataParams.num_points: 512
-      ModelParams.in_chan: 3
-      ModelParams.num_neighborhoods: 32
-      OptimizerParams.amsgrad: false
-      OptimizerParams.betas:
-      - 0.9
-      - 0.999
-      OptimizerParams.eps: 1e-08
-      OptimizerParams.lr: 0.1
-      OptimizerParams.weight_decay: 0.01
+      DataParams:
+        num_points: 512
+      ModelParams:
+        in_chan: 3
+        num_neighborhoods: 32
+      OptimizerParams:
+        lr: 0.1
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1e-08
+        weight_decay: 0.01
+        amsgrad: false
       SEED: 100
-      SchedulerParams.eta_min: 0.0001
-      SchedulerParams.verbose: true
+      SchedulerParams:
+        step_size: 15
+        verbose: true
+      TrainParams:
+        batch_size: 110
+        epochs: 50
+        valid_every: 5
+        benchmark: true
+        deterministic: true
   outs:
   - path: ./exp
-    md5: 1f8ed5a2c94ccf01139a28f6e88e2253.dir
-    size: 20341918
-    nfiles: 67
+    md5: eea86fb2afebeb0ce4a3eb7767de73f5.dir
+    size: 2906752
+    nfiles: 11
 export_model:
   cmd: python ./export_model.py --config ./configs/export_model.yml
   deps:
