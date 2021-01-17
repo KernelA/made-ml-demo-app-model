@@ -40,7 +40,7 @@ class SimpleShapes(data.InMemoryDataset):
 
     @ property
     def raw_file_names(self):
-        return self._find_archive()
+        return list(map(os.path.basename, self._find_archive()))
 
     @ property
     def label_encoder(self):
