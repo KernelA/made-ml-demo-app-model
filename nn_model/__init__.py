@@ -1,2 +1,2 @@
 from .ldgcnn import SimpleClsLDGCN
-from .transform import BaseTransform
+from .transform import BaseTransform, TrainTransform
