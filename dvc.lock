@@ -5,12 +5,12 @@ prepare_data:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./prepare_data.py
-    md5: 41be5742cbc30c4888a5f7af95cf40bd
-    size: 678
+    md5: 788e607068111701be1f0a1e3816c4c2
+    size: 663
   outs:
   - path: ./train_data/simple-shapes
-    md5: 0d9e84920319f0460a5cf072a53d222e.dir
-    size: 25495352
+    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    size: 25495416
     nfiles: 5
 train_model:
   cmd: python ./train.py --config ./configs/base_params.yml
@@ -22,19 +22,19 @@ train_model:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./nn_model
-    md5: 0b2dcae180a24465fe116bbe0db86a40.dir
-    size: 3424
-    nfiles: 4
+    md5: e35c73bd81032827838d4278036bd1dc.dir
+    size: 5847
+    nfiles: 6
   - path: ./point_cloud_cls
-    md5: f8bb4718a49503b30ab8f69925a75bf1.dir
-    size: 20635
-    nfiles: 11
+    md5: eb74579d6b8df006cc5276f69d210c2f.dir
+    size: 19696
+    nfiles: 10
   - path: ./train.py
-    md5: 79b02d7df379e7523cdc90fc66bfa927
-    size: 5061
+    md5: efd64c201992414355f455800d2c5172
+    size: 5014
   - path: ./train_data/simple-shapes
-    md5: 0d9e84920319f0460a5cf072a53d222e.dir
-    size: 25495352
+    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    size: 25495416
     nfiles: 5
   params:
     train_param.py:
@@ -57,15 +57,15 @@ train_model:
         verbose: true
       TrainParams:
         batch_size: 110
-        epochs: 60
+        epochs: 1
         valid_every: 5
         benchmark: true
         deterministic: true
   outs:
   - path: ./exp
-    md5: 04d2b011eb1ae65f51f958de70b5c78c.dir
-    size: 2968631
-    nfiles: 11
+    md5: 4fc7520422b2531327ce077422d209db.dir
+    size: 28803
+    nfiles: 8
 export_model:
   cmd: python ./export_model.py --config ./configs/export_model.yml
   deps:
@@ -90,3 +90,72 @@ export_model:
     md5: 0b88b71f6b635b7bf852928a1023414c.dir
     size: 287745
     nfiles: 3
+test_prepare_data:
+  cmd: python ./prepare_data.py --config ./configs/prepare_test_data.yml
+  deps:
+  - path: ./configs/prepare_test_data.yml
+    md5: 3de22f25700ef2411899842d95c5e6f4
+    size: 109
+  - path: ./dataset/test-simple-dataset.7z
+    md5: 84d654b6dd2727a132f1004b60e74094
+    size: 4892
+  - path: ./prepare_data.py
+    md5: 788e607068111701be1f0a1e3816c4c2
+    size: 663
+  outs:
+  - path: ./train_data/small-test-shapes
+    md5: d92fefe8aa81ea07b74128191be62391.dir
+    size: 20152
+    nfiles: 5
+test_train_model:
+  cmd: python ./train.py --config ./configs/base_params.yml --data_config ./configs/prepare_test_data.yml
+    --exp ./exp_test_run --fast_dev_run
+  deps:
+  - path: ./configs/base_params.yml
+    md5: 14a4438a31729caa1a99572e5c6b0b3e
+    size: 71
+  - path: ./nn_model
+    md5: e35c73bd81032827838d4278036bd1dc.dir
+    size: 5847
+    nfiles: 6
+  - path: ./point_cloud_cls
+    md5: eb74579d6b8df006cc5276f69d210c2f.dir
+    size: 19696
+    nfiles: 10
+  - path: ./train.py
+    md5: efd64c201992414355f455800d2c5172
+    size: 5014
+  - path: ./train_data/small-test-shapes
+    md5: d92fefe8aa81ea07b74128191be62391.dir
+    size: 20152
+    nfiles: 5
+  params:
+    train_param.py:
+      DataParams:
+        num_points: 512
+      ModelParams:
+        in_chan: 3
+        num_neighborhoods: 32
+      OptimizerParams:
+        lr: 0.1
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1e-08
+        weight_decay: 0.01
+        amsgrad: false
+      SEED: 100
+      SchedulerParams:
+        step_size: 20
+        verbose: true
+      TrainParams:
+        batch_size: 110
+        epochs: 1
+        valid_every: 5
+        benchmark: true
+        deterministic: true
+  outs:
+  - path: ./exp_test_run
+    md5: d751713988987e9331980363e24189ce.dir
+    size: 0
+    nfiles: 0

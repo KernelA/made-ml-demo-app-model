@@ -25,7 +25,7 @@ class DataParams:
 class TrainParams:
     def __init__(self) -> None:
         self.batch_size = 110
-        self.epochs = 60
+        self.epochs = 1
         self.valid_every = 5
         self.benchmark = True
         self.deterministic = True

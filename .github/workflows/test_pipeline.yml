@@ -1,4 +1,4 @@
-name: Test nds library
+name: Test pipeline
 
 on:
   push:
@@ -13,8 +13,14 @@ jobs:
     container: continuumio/miniconda:4.7.12
 
     steps:
+      - name: Install LFS
+        run: |
+          apt update
+          apt install -y git-lfs
       - uses: actions/checkout@v2
+        with:
+          lfs: true
       - name: Setup environment
         run: conda env update -n base --file ./conda-env.yml
       - name: Test run
-        run: dvc repro test_prepare_data
+        run: conda run -n base dvc repro test_train_model
