@@ -9,8 +9,8 @@ from torch_geometric import data
 from pytorch_lightning import Trainer, seed_everything
 from pytorch_lightning.callbacks import ModelCheckpoint, LearningRateMonitor, EarlyStopping
 
-from nn_model import SimpleClsLDGCN
-from point_cloud_cls import ClassificationModelTrainer, BaseTransform, TrainTransform, dataset
+from nn_model import SimpleClsLDGCN, BaseTransform, TrainTransform
+from point_cloud_cls import ClassificationModelTrainer, dataset
 import train_param
 
 
