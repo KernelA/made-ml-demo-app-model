@@ -1,16 +1,12 @@
-import os
 import pathlib
 import logging
 import json
 import pickle
-import shutil
 
 import configargparse
 import torch
-import trimesh
 
-from point_cloud_cls import SimpleClsLDGCN, dataset, BaseTransform
-from torch_geometric import utils, data
+from point_cloud_cls import dataset, BaseTransform
 from train_param import ModelParams, DataParams
 from train import load_yaml
 
@@ -30,9 +26,21 @@ def export_model(model_dir, path_to_checkpoint, num_classes: int):
 
     LOGGER.info("Save model config to %s", path_to_dump)
 
+    checkpoint = torch.load(path_to_checkpoint, map_location="cpu")
+    model_state = checkpoint["state_dict"]
+
+    replace_prefix = "cls_model."
+    new_state = dict()
+
+    for key in model_state:
+        new_key = key
+        if key.startswith(replace_prefix):
+            new_key = key[len(replace_prefix):]
+        new_state[new_key] = model_state[key]
+
     path_to_copy_checkpoint = model_dir / "model_state.pth"
 
-    shutil.copyfile(path_to_checkpoint, path_to_copy_checkpoint)
+    torch.save(new_state, path_to_copy_checkpoint)
     LOGGER.info("Save model state to %s", path_to_checkpoint)
 
 
@@ -58,7 +66,8 @@ def main(args):
     classes = data_config["classes"]
 
     base_transform = BaseTransform(num_points)
-    test_dataset = dataset.SimpleShapes(data_root, classes, transform=base_transform, is_train=False)
+    test_dataset = dataset.SimpleShapes(data_config["input"], data_root,
+                                        classes, transform=base_transform, is_train=False)
 
     model_data_dir = export_dir / "model"
     model_data_dir.mkdir(exist_ok=True)

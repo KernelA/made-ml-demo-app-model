@@ -30,7 +30,7 @@ stages:
     deps:
     - ./configs/export_model.yml
     - ./configs/prepare_data.yml
-    - ./exp/checkpoints/model_state_48.pth
+    - ./exp/lightning_logs/version_0/checkpoints/epoch=59-Train/overall_accuracy=0.95.ckpt
     - ./export_model.py
     - ./point_cloud_cls
     outs:

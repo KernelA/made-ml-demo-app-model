@@ -70,23 +70,23 @@ export_model:
   cmd: python ./export_model.py --config ./configs/export_model.yml
   deps:
   - path: ./configs/export_model.yml
-    md5: 1ecce98bf73e08ba2d043e04a24ff900
-    size: 132
+    md5: 31f0481f0aa6dfb6a1a6bd752da89a53
+    size: 180
   - path: ./configs/prepare_data.yml
-    md5: bca44fa9f227be197d1ea6eac98c2be9
-    size: 93
-  - path: ./exp/checkpoints/model_state_48.pth
-    md5: e1fef55e5e5b4de8cd0d0e9ee38ee30f
-    size: 289159
+    md5: 35cf285709de03be99eb22fa88c0bed7
+    size: 134
+  - path: ./exp/lightning_logs/version_0/checkpoints/epoch=59-Train/overall_accuracy=0.95.ckpt
+    md5: a13774021f49f14d889fbad185a6c7be
+    size: 843199
   - path: ./export_model.py
-    md5: f0a571c7ccbe223549a147c905606b1a
-    size: 2935
+    md5: 4f62426e9da031f780d7b2e6ebc880e6
+    size: 3258
   - path: ./point_cloud_cls
-    md5: e4ccca7fe97eac60aec442936a2706ae.dir
-    size: 20641
-    nfiles: 10
+    md5: f8bb4718a49503b30ab8f69925a75bf1.dir
+    size: 20635
+    nfiles: 11
   outs:
   - path: ./inference-data
-    md5: 4957489a6ab1e7b0d549c0b022964d02.dir
-    size: 289665
+    md5: 0b88b71f6b635b7bf852928a1023414c.dir
+    size: 287745
     nfiles: 3
