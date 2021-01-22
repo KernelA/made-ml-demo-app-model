@@ -1,0 +1,20 @@
+name: Test nds library
+
+on:
+  push:
+    branches: [master, develop]
+  pull_request:
+    branches: [master, develop]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    container: continuumio/miniconda:4.7.12
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup environment
+        run: conda env update -n base --file ./conda-env.yml
+      - name: Test run
+        run: dvc repro test_prepare_data
