@@ -1,2 +1,3 @@
 classes: [cone, cube, cylinder, plane, torus, uv_sphere]
-data_root_dir: ./data/simple-shapes
+input: ./dataset/simple-shapes.7z
+data_root_dir: ./train_data/simple-shapes

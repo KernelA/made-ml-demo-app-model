@@ -5,22 +5,16 @@ stages:
     - ./configs/base_params.yml
     - ./configs/prepare_data.yml
     - ./point_cloud_cls
+    - ./nn_model
     - ./train.py
-    - ./data/simple-shapes
+    - ./train_data/simple-shapes
     params:
     - train_param.py:
-      - DataParams.batch_size
-      - DataParams.epochs
-      - DataParams.num_points
-      - ModelParams.in_chan
-      - ModelParams.num_neighborhoods
-      - OptimizerParams.amsgrad
-      - OptimizerParams.betas
-      - OptimizerParams.eps
-      - OptimizerParams.lr
-      - OptimizerParams.weight_decay
-      - SchedulerParams.eta_min
-      - SchedulerParams.verbose
+      - DataParams
+      - OptimizerParams
+      - ModelParams
+      - TrainParams
+      - SchedulerParams
       - SEED
     outs:
     - ./exp
@@ -30,15 +24,42 @@ stages:
     - ./configs/prepare_data.yml
     - ./prepare_data.py
     outs:
-    - ./data/simple-shapes
+    - ./train_data/simple-shapes
   export_model:
     cmd: python ./export_model.py --config ./configs/export_model.yml
     deps:
     - ./configs/export_model.yml
     - ./configs/prepare_data.yml
-    - ./exp/checkpoints/model_state_48.pth
+    - ./exp/lightning_logs/version_0/checkpoints/epoch=59-Train/overall_accuracy=0.95.ckpt
     - ./export_model.py
     - ./point_cloud_cls
     outs:
     - ./inference-data:
+        cache: false
+  test_prepare_data:
+    cmd: python ./prepare_data.py --config ./configs/prepare_test_data.yml
+    deps:
+    - ./configs/prepare_test_data.yml
+    - ./dataset/test-simple-dataset.7z
+    - ./prepare_data.py
+    outs:
+    - ./train_data/small-test-shapes
+  test_train_model:
+    cmd: python ./train.py --config ./configs/base_params.yml --data_config ./configs/prepare_test_data.yml --exp ./exp_test_run --fast_dev_run
+    deps:
+    - ./configs/base_params.yml
+    - ./point_cloud_cls
+    - ./nn_model
+    - ./train.py
+    - ./train_data/small-test-shapes
+    params:
+    - train_param.py:
+      - DataParams
+      - OptimizerParams
+      - ModelParams
+      - TrainParams
+      - SchedulerParams
+      - SEED
+    outs:
+    - ./exp_test_run:
         cache: false

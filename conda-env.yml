@@ -11,16 +11,18 @@ dependencies:
   - cudatoolkit=10.2
   - pytorch=1.7.0
   - tqdm
-  - dvc=1.11
+  - dvc-base=1.11
   - pip
   - ipython
   - scikit-learn=0.23.2
   - networkx
-  - trimesh
+  - trimesh=3.9
   - pyglet
+  - pytorch-lightning=1.1
+  - seaborn
   - pip:
-      - torch-geometric
-      - gdown
+      - torch-geometric~=1.6
+      - py7zr~=0.11
       - ipykernel
       - --find-links https://pytorch-geometric.com/whl/torch-1.7.0+cu102.html
       - torch-cluster
