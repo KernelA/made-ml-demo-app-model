@@ -108,7 +108,6 @@ def train(args):
                       default_root_dir=str(exp_dir),
                       fast_dev_run=args.fast_dev_run,
                       max_epochs=train_params.epochs,
-                      weights_summary="full",
                       callbacks=[learning_rate_monitor, checkpoint_callback, early_stopping])
 
     trainer.fit(model, train_dataloader=train_loader, val_dataloaders=test_loader)
