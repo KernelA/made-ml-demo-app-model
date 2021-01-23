@@ -6,7 +6,8 @@ import pickle
 import configargparse
 import torch
 
-from point_cloud_cls import dataset, BaseTransform
+from point_cloud_cls import dataset
+from nn_model import BaseTransform
 from train_param import ModelParams, DataParams
 from train import load_yaml
 
@@ -84,7 +85,6 @@ if __name__ == "__main__":
                         type=str, help="A path to prepare_data config")
     parser.add_argument("--checkpoint", required=True, type=str, help="A path to model checkpoint")
     parser.add_argument("--export_dir", required=True, type=str, help="A path to directory with all files")
-    parser.add_argument("--device", required=True, choices=["cpu", "cuda"], help="A device type to run model")
 
     args = parser.parse_args()
     main(args)

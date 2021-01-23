@@ -70,5 +70,5 @@ class ClassificationModelTrainer(pl.LightningModule):
 
     def configure_optimizers(self):
         optimizer = optim.AdamW(self.parameters(), **self._optimizer_params.__dict__)
-        sheduler = optim.lr_scheduler.StepLR(optimizer, **self._sheduler_params.__dict__)
+        sheduler = optim.lr_scheduler.CosineAnnealingLR(optimizer, **self._sheduler_params.__dict__)
         return [optimizer], [sheduler]

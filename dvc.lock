@@ -5,12 +5,12 @@ prepare_data:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./prepare_data.py
-    md5: 41be5742cbc30c4888a5f7af95cf40bd
-    size: 678
+    md5: 788e607068111701be1f0a1e3816c4c2
+    size: 663
   outs:
   - path: ./train_data/simple-shapes
-    md5: 0d9e84920319f0460a5cf072a53d222e.dir
-    size: 25495352
+    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    size: 25495416
     nfiles: 5
 train_model:
   cmd: python ./train.py --config ./configs/base_params.yml
@@ -22,19 +22,113 @@ train_model:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./nn_model
-    md5: 0b2dcae180a24465fe116bbe0db86a40.dir
-    size: 3424
-    nfiles: 4
+    md5: 02ea25e5cf0793dc810d35572508e006.dir
+    size: 5847
+    nfiles: 6
   - path: ./point_cloud_cls
-    md5: f8bb4718a49503b30ab8f69925a75bf1.dir
-    size: 20635
-    nfiles: 11
+    md5: bf07b8e5c8a9d05da6f6c4973825ce54.dir
+    size: 19899
+    nfiles: 10
   - path: ./train.py
-    md5: 79b02d7df379e7523cdc90fc66bfa927
-    size: 5061
+    md5: 95ae3daa22ea48459de3c218e8ba8a6d
+    size: 4986
   - path: ./train_data/simple-shapes
-    md5: 0d9e84920319f0460a5cf072a53d222e.dir
-    size: 25495352
+    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    size: 25495416
+    nfiles: 5
+  params:
+    train_param.py:
+      DataParams:
+        num_points: 512
+      ModelParams:
+        in_chan: 3
+        num_neighborhoods: 32
+      OptimizerParams:
+        lr: 0.1
+        betas:
+        - 0.9
+        - 0.999
+        eps: 1e-08
+        weight_decay: 0.01
+        amsgrad: false
+      SEED: 100
+      SchedulerParams:
+        T_max: 50
+        eta_min: 0.0001
+        verbose: true
+      TrainParams:
+        batch_size: 110
+        epochs: 50
+        valid_every: 10
+        benchmark: true
+        deterministic: true
+  outs:
+  - path: ./exp
+    md5: f38cbd3219d8d686edffff6443392b83.dir
+    size: 4415544
+    nfiles: 13
+export_model:
+  cmd: python ./export_model.py --config ./configs/export_model.yml
+  deps:
+  - path: ./configs/export_model.yml
+    md5: 19225ac299dcabb1422278d4149d03c7
+    size: 139
+  - path: ./configs/prepare_data.yml
+    md5: 35cf285709de03be99eb22fa88c0bed7
+    size: 134
+  - path: ./exp/lightning_logs/version_0/checkpoints/epoch=49.ckpt
+    md5: 0fb0e4f4bc6de0c6194f498ee4a5007b
+    size: 842935
+  - path: ./export_model.py
+    md5: 712636f4fcd0423a427bfda7089e0420
+    size: 3167
+  - path: ./point_cloud_cls
+    md5: bf07b8e5c8a9d05da6f6c4973825ce54.dir
+    size: 19899
+    nfiles: 10
+  outs:
+  - path: ./inference-data
+    md5: c4e4f8c122b71c3e646a3635af94fe5f.dir
+    size: 287745
+    nfiles: 3
+test_prepare_data:
+  cmd: python ./prepare_data.py --config ./configs/prepare_test_data.yml
+  deps:
+  - path: ./configs/prepare_test_data.yml
+    md5: 3de22f25700ef2411899842d95c5e6f4
+    size: 109
+  - path: ./dataset/test-simple-dataset.7z
+    md5: 84d654b6dd2727a132f1004b60e74094
+    size: 4892
+  - path: ./prepare_data.py
+    md5: 788e607068111701be1f0a1e3816c4c2
+    size: 663
+  outs:
+  - path: ./train_data/small-test-shapes
+    md5: d92fefe8aa81ea07b74128191be62391.dir
+    size: 20152
+    nfiles: 5
+test_train_model:
+  cmd: python ./train.py --config ./configs/base_params.yml --data_config ./configs/prepare_test_data.yml
+    --exp ./exp_test_run --fast_dev_run
+  deps:
+  - path: ./configs/base_params.yml
+    md5: 14a4438a31729caa1a99572e5c6b0b3e
+    size: 71
+  - path: ./nn_model
+    md5: 02ea25e5cf0793dc810d35572508e006.dir
+    size: 5847
+    nfiles: 6
+  - path: ./point_cloud_cls
+    md5: d8367e66dfd0fde24b7ede33a345e3c4.dir
+    size: 19696
+    nfiles: 10
+  - path: ./train.py
+    md5: efd64c201992414355f455800d2c5172
+    size: 5014
+  - path: ./train_data/small-test-shapes
+    md5: d92fefe8aa81ea07b74128191be62391.dir
+    size: 20152
     nfiles: 5
   params:
     train_param.py:
@@ -62,31 +156,7 @@ train_model:
         benchmark: true
         deterministic: true
   outs:
-  - path: ./exp
-    md5: 04d2b011eb1ae65f51f958de70b5c78c.dir
-    size: 2968631
-    nfiles: 11
-export_model:
-  cmd: python ./export_model.py --config ./configs/export_model.yml
-  deps:
-  - path: ./configs/export_model.yml
-    md5: 31f0481f0aa6dfb6a1a6bd752da89a53
-    size: 180
-  - path: ./configs/prepare_data.yml
-    md5: 35cf285709de03be99eb22fa88c0bed7
-    size: 134
-  - path: ./exp/lightning_logs/version_0/checkpoints/epoch=59-Train/overall_accuracy=0.95.ckpt
-    md5: a13774021f49f14d889fbad185a6c7be
-    size: 843199
-  - path: ./export_model.py
-    md5: 4f62426e9da031f780d7b2e6ebc880e6
-    size: 3258
-  - path: ./point_cloud_cls
-    md5: f8bb4718a49503b30ab8f69925a75bf1.dir
-    size: 20635
-    nfiles: 11
-  outs:
-  - path: ./inference-data
-    md5: 0b88b71f6b635b7bf852928a1023414c.dir
-    size: 287745
-    nfiles: 3
+  - path: ./exp_test_run
+    md5: d751713988987e9331980363e24189ce.dir
+    size: 0
+    nfiles: 0

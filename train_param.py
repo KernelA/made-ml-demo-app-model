@@ -25,13 +25,15 @@ class DataParams:
 class TrainParams:
     def __init__(self) -> None:
         self.batch_size = 110
-        self.epochs = 60
-        self.valid_every = 5
+        self.epochs = 50
+        self.valid_every = 10
         self.benchmark = True
         self.deterministic = True
 
 
 class SchedulerParams:
     def __init__(self):
-        self.step_size = 20
+        # must be same as self.epochs from TrainParams
+        self.T_max = 50
+        self.eta_min = 1e-4
         self.verbose = True
