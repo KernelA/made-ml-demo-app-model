@@ -1,4 +1,3 @@
 data_config: ./configs/prepare_data.yml
-checkpoint: ./exp/lightning_logs/version_0/checkpoints/epoch=59-Train/overall_accuracy=0.95.ckpt
+checkpoint: ./exp/lightning_logs/version_0/checkpoints/epoch=49.ckpt
 export_dir: ./inference-data
-device: cpu
