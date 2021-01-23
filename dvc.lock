@@ -9,7 +9,7 @@ prepare_data:
     size: 663
   outs:
   - path: ./train_data/simple-shapes
-    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    md5: 613de83857abba5bb72119d33f5bb4b0.dir
     size: 25495416
     nfiles: 5
 train_model:
@@ -33,7 +33,7 @@ train_model:
     md5: 95ae3daa22ea48459de3c218e8ba8a6d
     size: 4986
   - path: ./train_data/simple-shapes
-    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    md5: 613de83857abba5bb72119d33f5bb4b0.dir
     size: 25495416
     nfiles: 5
   params:
@@ -64,8 +64,8 @@ train_model:
         deterministic: true
   outs:
   - path: ./exp
-    md5: f38cbd3219d8d686edffff6443392b83.dir
-    size: 4415544
+    md5: c01e7ed946ef08cec8e4d489fa25af1e.dir
+    size: 4416506
     nfiles: 13
 export_model:
   cmd: python ./export_model.py --config ./configs/export_model.yml
@@ -77,7 +77,7 @@ export_model:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./exp/lightning_logs/version_0/checkpoints/epoch=49.ckpt
-    md5: 0fb0e4f4bc6de0c6194f498ee4a5007b
+    md5: db0bd0641f86c087db8e3ae6bfbc507d
     size: 842935
   - path: ./export_model.py
     md5: 712636f4fcd0423a427bfda7089e0420
@@ -88,7 +88,7 @@ export_model:
     nfiles: 10
   outs:
   - path: ./inference-data
-    md5: c4e4f8c122b71c3e646a3635af94fe5f.dir
+    md5: 999075a5ecc2e1af66f47d7e86fbe602.dir
     size: 287745
     nfiles: 3
 test_prepare_data:
