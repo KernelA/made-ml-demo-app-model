@@ -85,10 +85,10 @@ def train(args):
     model = get_model(train_dataset.label_encoder.classes_)
 
     checkpoint_callback = ModelCheckpoint(monitor="Train/overall_accuracy",
-                                          save_top_k=3,
+                                          save_top_k=-1,
                                           period=5,
                                           mode="max",
-                                          filename="{epoch}-{Train/overall_accuracy:.2f}")
+                                          filename="{epoch}")
 
     learning_rate_monitor = LearningRateMonitor(logging_interval="epoch")
 

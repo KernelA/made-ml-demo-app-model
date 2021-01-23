@@ -9,7 +9,7 @@ prepare_data:
     size: 663
   outs:
   - path: ./train_data/simple-shapes
-    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    md5: 613de83857abba5bb72119d33f5bb4b0.dir
     size: 25495416
     nfiles: 5
 train_model:
@@ -22,18 +22,18 @@ train_model:
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
   - path: ./nn_model
-    md5: e35c73bd81032827838d4278036bd1dc.dir
+    md5: 02ea25e5cf0793dc810d35572508e006.dir
     size: 5847
     nfiles: 6
   - path: ./point_cloud_cls
-    md5: eb74579d6b8df006cc5276f69d210c2f.dir
-    size: 19696
+    md5: bf07b8e5c8a9d05da6f6c4973825ce54.dir
+    size: 19899
     nfiles: 10
   - path: ./train.py
-    md5: efd64c201992414355f455800d2c5172
-    size: 5014
+    md5: 95ae3daa22ea48459de3c218e8ba8a6d
+    size: 4986
   - path: ./train_data/simple-shapes
-    md5: 937cb350d14fd1cfed4ddd08bac77ff0.dir
+    md5: 613de83857abba5bb72119d33f5bb4b0.dir
     size: 25495416
     nfiles: 5
   params:
@@ -53,41 +53,42 @@ train_model:
         amsgrad: false
       SEED: 100
       SchedulerParams:
-        step_size: 20
+        T_max: 50
+        eta_min: 0.0001
         verbose: true
       TrainParams:
         batch_size: 110
-        epochs: 1
-        valid_every: 5
+        epochs: 50
+        valid_every: 10
         benchmark: true
         deterministic: true
   outs:
   - path: ./exp
-    md5: 4fc7520422b2531327ce077422d209db.dir
-    size: 28803
-    nfiles: 8
+    md5: c01e7ed946ef08cec8e4d489fa25af1e.dir
+    size: 4416506
+    nfiles: 13
 export_model:
   cmd: python ./export_model.py --config ./configs/export_model.yml
   deps:
   - path: ./configs/export_model.yml
-    md5: 31f0481f0aa6dfb6a1a6bd752da89a53
-    size: 180
+    md5: 19225ac299dcabb1422278d4149d03c7
+    size: 139
   - path: ./configs/prepare_data.yml
     md5: 35cf285709de03be99eb22fa88c0bed7
     size: 134
-  - path: ./exp/lightning_logs/version_0/checkpoints/epoch=59-Train/overall_accuracy=0.95.ckpt
-    md5: a13774021f49f14d889fbad185a6c7be
-    size: 843199
+  - path: ./exp/lightning_logs/version_0/checkpoints/epoch=49.ckpt
+    md5: db0bd0641f86c087db8e3ae6bfbc507d
+    size: 842935
   - path: ./export_model.py
-    md5: 4f62426e9da031f780d7b2e6ebc880e6
-    size: 3258
+    md5: 712636f4fcd0423a427bfda7089e0420
+    size: 3167
   - path: ./point_cloud_cls
-    md5: f8bb4718a49503b30ab8f69925a75bf1.dir
-    size: 20635
-    nfiles: 11
+    md5: bf07b8e5c8a9d05da6f6c4973825ce54.dir
+    size: 19899
+    nfiles: 10
   outs:
   - path: ./inference-data
-    md5: 0b88b71f6b635b7bf852928a1023414c.dir
+    md5: 999075a5ecc2e1af66f47d7e86fbe602.dir
     size: 287745
     nfiles: 3
 test_prepare_data:
@@ -115,16 +116,16 @@ test_train_model:
     md5: 14a4438a31729caa1a99572e5c6b0b3e
     size: 71
   - path: ./nn_model
-    md5: e35c73bd81032827838d4278036bd1dc.dir
+    md5: 02ea25e5cf0793dc810d35572508e006.dir
     size: 5847
     nfiles: 6
   - path: ./point_cloud_cls
-    md5: eb74579d6b8df006cc5276f69d210c2f.dir
-    size: 19696
+    md5: bf07b8e5c8a9d05da6f6c4973825ce54.dir
+    size: 19899
     nfiles: 10
   - path: ./train.py
-    md5: efd64c201992414355f455800d2c5172
-    size: 5014
+    md5: 95ae3daa22ea48459de3c218e8ba8a6d
+    size: 4986
   - path: ./train_data/small-test-shapes
     md5: d92fefe8aa81ea07b74128191be62391.dir
     size: 20152
@@ -146,12 +147,13 @@ test_train_model:
         amsgrad: false
       SEED: 100
       SchedulerParams:
-        step_size: 20
+        T_max: 50
+        eta_min: 0.0001
         verbose: true
       TrainParams:
         batch_size: 110
-        epochs: 1
-        valid_every: 5
+        epochs: 50
+        valid_every: 10
         benchmark: true
         deterministic: true
   outs:
